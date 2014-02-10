@@ -1,3 +1,15 @@
+# == Schema Information
+#
+# Table name: users
+#
+#  id              :integer          not null, primary key
+#  username        :string(255)      not null
+#  password_digest :string(255)      not null
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  session_token   :string(255)      not null
+#
+
 class User < ActiveRecord::Base
   attr_accessible :username, :password
   attr_reader :password
@@ -8,6 +20,12 @@ class User < ActiveRecord::Base
   validates :username, :presence => true
 
   after_initialize :ensure_session_token
+
+  has_many(
+    :photos,
+    class_name: "Photo",
+    foreign_key: :owner_id
+  )
 
   def self.find_by_credentials(username, password)
     user = User.find_by_username(username)

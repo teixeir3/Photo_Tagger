@@ -21,3 +21,64 @@
 //= require_tree ../templates
 //
 //= require_tree .
+
+// var Photo = function(owner_id, url) {
+//   this.owner_id = owner_id;
+//   this.url = url;
+// };
+
+var Photo = function (POJO) {
+  var attr = _.extend({}, POJO);
+  this.attributes = attr;
+};
+
+_.extend(Photo.prototype, {
+  get: function(attr_name) {
+    return this.attributes[attr_name];
+  },
+
+  set: function(attr_name, value) {
+    return this.attributes[attr_name] = value;
+  },
+
+  save: function(callback) {
+    var id = this.get("id");
+    if (id) {
+      //updates
+      $.ajax({
+        url: "/api/photos/" + id,
+        type: "PUT",
+        data: {photo: this.attributes},
+        success: callback
+      });
+      // perform callback if successful.
+    } else {
+      //saves
+      $.ajax({
+        url: "/api/photos",
+        type: "POST",
+        data: {photo: this.attributes},
+        success: callback
+      });
+      // perform callback if successful.
+    }
+  },
+
+  create: function(callback) {
+
+  }
+
+
+
+});
+
+
+// var photoDetails = {owner_id: 1, url: 'www.google.com'};
+//
+// Photo.prototype.get = function(attr_name) {
+//   return this[attr_name];
+// }
+//
+// var photo = new Photo(photoDetails);
+// photo.create();
+// photo.save();

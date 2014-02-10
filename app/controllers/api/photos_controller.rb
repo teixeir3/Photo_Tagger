@@ -18,4 +18,17 @@ class Api::PhotosController < ApplicationController
     @photos = Photo.where("owner_id = ?", params[:user_id])
     render :json => @photos
   end
+
+  def update
+    @photo = Photo.find(params[:id])
+
+    if @photo.update_attributes(params[:photo])
+      render :json => @photo
+    else
+      render(
+        :json => @photo.errors.full_messages,
+        :status => :unprocessible_entity
+      )
+    end
+  end
 end
