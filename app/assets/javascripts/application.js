@@ -32,12 +32,17 @@
   var PT = root.PT = (root.PT || {});
 
   var PhotosListView = PT.PhotosListView;
+  var PhotoFormView = PT.PhotoFormView;
+
+
   _.extend(PT, {
     initialize: function(id) {
       Photo.fetchByUserId(id, function(){
         var view = new PhotosListView;
         $("#content").html(view.render().$el);
-        return view;
+
+        var newForm = new PhotoFormView;
+        $("body").append(newForm.render().$el);
       });
     }
   });
