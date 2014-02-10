@@ -43,29 +43,25 @@ _.extend(Photo.prototype, {
 
   save: function(callback) {
     var id = this.get("id");
-    if (id) {
-      //updates
-      $.ajax({
-        url: "/api/photos/" + id,
-        type: "PUT",
-        data: {photo: this.attributes},
-        success: callback
-      });
-      // perform callback if successful.
-    } else {
-      //saves
-      $.ajax({
-        url: "/api/photos",
-        type: "POST",
-        data: {photo: this.attributes},
-        success: callback
-      });
-      // perform callback if successful.
-    }
+    (id) ? this.update(id, callback) : this.create(callback);
   },
 
   create: function(callback) {
+    $.ajax({
+      url: "/api/photos",
+      type: "POST",
+      data: {photo: this.attributes},
+      success: callback
+    });
+  },
 
+  update: function(id, callback) {
+    $.ajax({
+      url: "/api/photos/" + id,
+      type: "PUT",
+      data: {photo: this.attributes},
+      success: callback
+    });
   }
 
 
