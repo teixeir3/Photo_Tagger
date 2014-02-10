@@ -18,6 +18,7 @@
 //= require underscore
 //
 //= require_tree ./models
+//= require_tree ./views
 //= require_tree ../templates
 //
 //= require_tree .
@@ -27,54 +28,88 @@
 //   this.url = url;
 // };
 
-var Photo = function (POJO) {
-  var attr = _.extend({}, POJO);
-  this.attributes = attr;
-};
+(function(root) {
+  var PT = root.PT = (root.PT || {});
 
-_.extend(Photo.prototype, {
-  get: function(attr_name) {
-    return this.attributes[attr_name];
-  },
+  var PhotosListView = PT.PhotosListView;
+  _.extend(PT, {
+    initialize: function(id) {
+      Photo.fetchByUserId(id, function(){console.log("GREAT SUCCESS!")});
+      var view = new PhotosListView;
+      view = view.render();
+      return view;
+    }
 
-  set: function(attr_name, value) {
-    return this.attributes[attr_name] = value;
-  },
+  });
 
-  save: function(callback) {
-    var id = this.get("id");
-    (id) ? this.update(id, callback) : this.create(callback);
-  },
+  var Photo = PT.Photo = function (POJO) {
+    var attr = _.extend({}, POJO);
+    this.attributes = attr;
+  };
 
-  create: function(callback) {
-    $.ajax({
-      url: "/api/photos",
-      type: "POST",
-      data: {photo: this.attributes},
-      success: callback
-    });
-  },
+  _.extend(Photo, {
+    fetchByUserId: function(userId, callback) {
+      // look for given photos of a user id
+      // turn those POJO into photo objects
+      // call callback
 
-  update: function(id, callback) {
-    $.ajax({
-      url: "/api/photos/" + id,
-      type: "PUT",
-      data: {photo: this.attributes},
-      success: callback
-    });
-  }
+      $.ajax({
+        url: "/api/users/" + userId + "/photos",
+        type: "GET",
+        success: function(response) {
+          var photoObjs = _.map(response, function(el) {
+            return new Photo(el);
+          })
+          callback();
+          Photo.all = Photo.all.concat(photoObjs);
+          // return photoObjs;
+        }
+      });
+    },
+    all: []
 
+  });
 
+  _.extend(Photo.prototype, {
+    get: function(attr_name) {
+      return this.attributes[attr_name];
+    },
 
-});
+    set: function(attr_name, value) {
+      return this.attributes[attr_name] = value;
+    },
 
+    save: function(callback) {
+      var id = this.get("id");
+      (id) ? this.update(id, callback) : this.create(callback);
+    },
 
-// var photoDetails = {owner_id: 1, url: 'www.google.com'};
-//
-// Photo.prototype.get = function(attr_name) {
-//   return this[attr_name];
-// }
-//
-// var photo = new Photo(photoDetails);
-// photo.create();
-// photo.save();
+    create: function(callback) {
+      var that = this;
+      $.ajax({
+        url: "/api/photos",
+        type: "POST",
+        data: {photo: this.attributes},
+        success: function(response){
+          _.extend(that.attributes, response);
+
+          //add to photo array.
+          Photo.all.push(that);
+          callback();
+        }
+      });
+    },
+
+    update: function(id, callback) {
+      $.ajax({
+        url: "/api/photos/" + id,
+        type: "PUT",
+        data: {photo: this.attributes},
+        success: function(response){
+          _.extend(that.attributes, response);
+          callback();
+        }
+      });
+    }
+  });
+})(this);
