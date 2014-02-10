@@ -3,6 +3,11 @@
 
   var PhotosListView = PT.PhotosListView = function() {
     this.$el = $("<div></div>");
+    PT.Photo.on("add", this.render.bind(this));
+
+    // this.$el.on("add", function() {
+//       this.render();
+//     })
   }
 
   _.extend(PhotosListView.prototype, {

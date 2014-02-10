@@ -42,7 +42,7 @@
         $("#content").html(view.render().$el);
 
         var newForm = new PhotoFormView;
-        $("body").append(newForm.render().$el);
+        $("body").prepend(newForm.render().$el);
       });
     }
   });
@@ -69,7 +69,18 @@
         }
       });
     },
-    all: []
+    all: [],
+    _events: {add: []},
+    on: function(eventName, callback) {
+      this._events[eventName].push(callback);
+    },
+    trigger: function(eventName) {
+      var eventCBs = this._events[eventName];
+
+      _.each(eventCBs, function(cb) {
+        cb();
+      });
+    }
 
   });
 
@@ -85,6 +96,7 @@
     save: function(callback) {
       var id = this.get("id");
       (id) ? this.update(id, callback) : this.create(callback);
+
     },
 
     create: function(callback) {
@@ -98,6 +110,7 @@
 
           //add to photo array.
           Photo.all.push(that);
+          Photo.trigger("add");
           callback();
         }
       });
