@@ -5,6 +5,8 @@
   $(document).ready(function() {
     var CURRENT_USER_ID = <%= current_user.id %>
 
-    PT.initialize(CURRENT_USER_ID);
+    var view = PT.initialize(CURRENT_USER_ID);
+    console.log(view);
+    $("#content").append(view);
   });
 </script>

@@ -2,22 +2,19 @@
   var PT = root.PT = (root.PT || {});
 
   var PhotosListView = PT.PhotosListView = function() {
-    this.$el = $("<div id='content'>");
+    this.$el = $("<div></div>");
   }
 
   _.extend(PhotosListView.prototype, {
     render: function () {
-      var $el = this.$el;
-      $el = $("<div id='content'>");
-      $el.append("<ul>");
+      this.$el.html("<ul></ul>");
 
+      var that = this;
       _.each(PT.Photo.all, function(photo) {
-        $el.find("ul").append("<li>");
-        $el.find("ul").children().last().append(photo.get("title"));
+        that.$el.find("ul").append("<li>" + photo.get("title") + "</li>");
       });
 
       return this;
-
     }
 
   });

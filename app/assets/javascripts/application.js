@@ -34,12 +34,12 @@
   var PhotosListView = PT.PhotosListView;
   _.extend(PT, {
     initialize: function(id) {
-      Photo.fetchByUserId(id, function(){console.log("GREAT SUCCESS!")});
-      var view = new PhotosListView;
-      view = view.render();
-      return view;
+      Photo.fetchByUserId(id, function(){
+        var view = new PhotosListView;
+        $("#content").html(view.render().$el);
+        return view;
+      });
     }
-
   });
 
   var Photo = PT.Photo = function (POJO) {
@@ -49,9 +49,6 @@
 
   _.extend(Photo, {
     fetchByUserId: function(userId, callback) {
-      // look for given photos of a user id
-      // turn those POJO into photo objects
-      // call callback
 
       $.ajax({
         url: "/api/users/" + userId + "/photos",
@@ -60,8 +57,9 @@
           var photoObjs = _.map(response, function(el) {
             return new Photo(el);
           })
-          callback();
+
           Photo.all = Photo.all.concat(photoObjs);
+          callback();
           // return photoObjs;
         }
       });
