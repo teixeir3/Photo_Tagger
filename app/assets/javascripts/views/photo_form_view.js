@@ -10,7 +10,6 @@
   _.extend(PhotoFormView.prototype, {
     render: function () {
       this.$el.html(JST["photo_form"]);
-      console.log(this.$el);
       return this;
     },
 

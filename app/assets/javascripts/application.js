@@ -43,7 +43,13 @@
 
         var newForm = new PhotoFormView;
         $("body").prepend(newForm.render().$el);
+
+
       });
+    },
+    showPhotoDetail: function(photo) {
+      var detailView = new PT.PhotoDetailView(photo);
+      $("#photo-detail").prepend(detailView.render().$el);
     }
   });
 
